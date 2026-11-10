@@ -14,7 +14,8 @@ namespace JatekProjekt
         public AdatbazisKezelo()
         {
 
-            this.connectionString = "";// Irjuk meg a connectionstringet a megfelelő adatbázisra hivatkozva
+            this.connectionString = "server=localhost;database=jatekdb;uid=root;pwd=;";
+            // Irjuk meg a connectionstringet a megfelelő adatbázisra hivatkozva
         }
 
    
@@ -23,7 +24,31 @@ namespace JatekProjekt
         public List<Karakter> AdatokBetoltese()
         {
             var karakterek = new List<Karakter>();
-            
+            using (MySqlConnection connectiom = new MySqlConnection(connectionString))
+            {
+                string query = "SELECT * FROM karakterek";
+                using (MySqlCommand command = new MySqlCommand(query, connectiom))
+                {
+                    connectiom.Open();
+                    using (MySqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            int id = reader.GetInt32("Id");
+                            string nev = reader.GetString("Nev");
+                            string osztaly = reader.GetString("Osztaly");
+                            int szint = reader.GetInt32("Szint");
+                            int arany = reader.GetInt32("Arany");
+                            string szerver = reader.GetString("Szerver");
+
+
+                            Karakter karakter = new Karakter(id, nev, osztaly, szint, arany, szerver);
+                            karakterek.Add(karakter);
+                        }
+                    }
+                }
+            }
+
             return karakterek;
         }
     }
